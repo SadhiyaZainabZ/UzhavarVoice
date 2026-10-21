@@ -17,7 +17,7 @@ To handle cross-language search—where questions come in Tamil while many sourc
 ## Dataset
 | Source | Link | Documents | Pages | Licence / terms |
 |---|---|---|---|---|
-|TNAU Agritech Portal |http://www.agritech.tnau.ac.in/|Crop production, protection, released varieties (2019-2025), post-harvest technology, schemes and services (English and Tamil) |Minimum 4,000 pages |Public educational portal content |
+|TNAU Agritech Portal |http://www.agritech.tnau.ac.in/|Agriculture, Horticulture, Agrl. Engineering, Seed, Organic Farming, Technologies (Crop Production, Protection, Post Harvest), Schemes & Services (English and Tamil) |Minimum 4,000 pages |Public educational portal content |
 
 ## 10 real questions
 See [docs/QUESTIONS.md](docs/QUESTIONS.md).
