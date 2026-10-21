@@ -4,13 +4,14 @@ Write them the way your user would type them. At least 3 must need more than one
 
 | # | Question | Where the answer is (document, page) | Needs more than one page? |
 |---|---|---|---|
-| 1 | | | |
-| 2 | | | |
-| 3 | | | |
-| 4 | | | |
-| 5 | | | |
-| 6 | | | |
-| 7 | | | |
-| 8 | | | |
-| 9 | | | |
-| 10 | (cannot be answered from my documents) | none | |
+| 1 | நெற்பயிரில் இலை சுருட்டு புழுவை கட்டுப்படுத்துவது எப்படி? | Crop Protection PDF, Page 12 | No |
+| 2 | வாழையில் தண்டு துளைப்பான் தொந்தரவுக்கு என்ன மருந்து அடிக்க வேண்டும்? | Crop Protection PDF, Pages 18-19 | Yes |
+| 3 | கோடை உழவு செய்வதால் என்ன நன்மைகள் கிடைக்கும்? | Crop Production PDF, Page 5 | No |
+| 4 | ஏடிஆர் 37 நெல் விதைப்புக்கு எப்போது உரம் இட வேண்டும்? | Varieties & Fertiliser Guide, Pages 4-6 | Yes |
+| 5 | நெல்லில் இலை கருகல் நோய்க்கு TNAU பரிந்துரைக்கும் மருந்து என்ன? | Crop Protection PDF, Page 22 | No |
+| 6 | தக்காளி சாகுபடிக்கு சொட்டு நீர்ப்பாசனம் அமைப்பதற்கான அரசு மானியம் எப்படி பெறுவது? | Schemes and Services PDF, Pages 30-32 | Yes |
+| 7 | நேந்திரன் வாழை மரங்களுக்கு எந்த பருவத்தில் தண்ணீர் பாய்ச்ச வேண்டும்? | Crop Production PDF, Page 15 | No |
+| 8 | பயிர்க் காப்பீடு செய்ய கடைசி தேதி எப்போது மற்றும் என்ன ஆவணங்கள் வேண்டும்? | Schemes and Services PDF, Page 45 | No |
+| 9 | மண் பரிசோதனை செய்ய எப்படி மாதிரி எடுக்க வேண்டும்? | Soil Science PDF, Page 8 | No |
+| 10 | நெல்லுக்கு போடும் யூரியா உரம் விலை இப்போது என்ன? | none | No |
+
