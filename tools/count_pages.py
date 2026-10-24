@@ -1,4 +1,5 @@
 ﻿from pathlib import Path
+
 from pypdf import PdfReader
 
 root = Path(__file__).resolve().parent.parent
