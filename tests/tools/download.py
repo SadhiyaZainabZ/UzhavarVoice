@@ -77,7 +77,7 @@ def main(list_file):
                 with open(path, "wb") as f:
                     f.write(r.content)
 
-                digest = hashlib.sha256(r.content).hexdigest()[:16]
+                digest = hashlib.sha256(r.content).hexdigest()
                 log.writerow([
                     path, url, date.today().isoformat(),
                     len(r.content), digest

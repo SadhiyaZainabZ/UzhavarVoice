@@ -1,0 +1,11 @@
+﻿{
+  "sample_id": "UZV-001",
+  "crop": "Paddy",
+  "topic": "Climate requirements",
+  "language": "ta",
+  "source_name": "TNAU Agritech Portal",
+  "source_file": "orgfarm_prac_agri_paddy_climate_ta.html",
+  "content_type": "agricultural_knowledge",
+  "verification_status": "verify_against_original_source",
+  "intended_use": "Data ingestion and retrieval testing"
+}

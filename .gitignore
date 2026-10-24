@@ -9,5 +9,4 @@ data/raw/
 *.sqlite
 .DS_Store
 venv/
-data/sample/*
-!data/sample/.gitkeep
+
