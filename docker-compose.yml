@@ -1,0 +1,40 @@
+﻿services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      APP_NAME: UzhavarVoice
+      ENVIRONMENT: docker
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+      FALLBACK_MODEL: ${FALLBACK_MODEL:-gemini-2.5-flash-lite}
+      REQUEST_TIMEOUT: ${REQUEST_TIMEOUT:-30}
+      MAX_RETRIES: ${MAX_RETRIES:-2}
+      INPUT_COST_PER_MILLION: ${INPUT_COST_PER_MILLION:-0.0}
+      OUTPUT_COST_PER_MILLION: ${OUTPUT_COST_PER_MILLION:-0.0}
+      DATABASE_URL: postgresql://uzhavarvoice:uzhavarvoice_dev@db:5432/uzhavarvoice
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: uzhavarvoice
+      POSTGRES_USER: uzhavarvoice
+      POSTGRES_PASSWORD: uzhavarvoice_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U uzhavarvoice -d uzhavarvoice"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
