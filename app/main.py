@@ -1,4 +1,5 @@
-﻿import json
+﻿
+import json
 import logging
 from threading import Lock
 from typing import Annotated
@@ -17,7 +18,9 @@ logger = logging.getLogger(__name__)
 app = FastAPI(title="UzhavarVoice", version="0.2.0")
 
 SettingsDep = Annotated[Settings, Depends(get_settings)]
+
 _usage_lock = Lock()
+
 _usage = {
     "requests": 0,
     "input_tokens": 0,
@@ -39,29 +42,36 @@ def health(settings: SettingsDep) -> dict:
 
 @app.get("/ready")
 def ready(settings: SettingsDep) -> dict:
-    """Check Gemini configuration and database connectivity."""
-    if not settings.gemini_api_key:
-        raise HTTPException(
-            status_code=503,
-            detail="Gemini API key is not configured",
-        )
+    """Check database connectivity and Gemini configuration."""
 
+    # Check the database first so its failure is reported correctly.
     if not check_database():
         raise HTTPException(
             status_code=503,
             detail="Database is unavailable",
         )
 
-    return {"status": "ready", "database": "connected"}
+    if not settings.gemini_api_key:
+        raise HTTPException(
+            status_code=503,
+            detail="Gemini API key is not configured",
+        )
+
+    return {
+        "status": "ready",
+        "database": "connected",
+    }
 
 
 @app.get("/usage")
 def usage() -> dict:
+    """Return in-memory LLM usage totals."""
     with _usage_lock:
         return dict(_usage)
 
 
 def _record_usage(result: dict) -> None:
+    """Record successful LLM request usage."""
     with _usage_lock:
         _usage["requests"] += 1
         _usage["input_tokens"] += result["input_tokens"]
@@ -72,10 +82,11 @@ def _record_usage(result: dict) -> None:
 
 @app.post("/chat", response_model=ChatResponse)
 def chat_endpoint(body: ChatRequest, settings: SettingsDep):
+    """Generate an agricultural answer using the configured LLM."""
     try:
         result = chat(body.message, settings)
     except Exception as exc:
-        # Log the error type and message, but never log the API key.
+        # Do not expose API keys or internal error details to clients.
         logger.error(
             "LLM request failed: %s: %s",
             type(exc).__name__,
@@ -91,6 +102,8 @@ def chat_endpoint(body: ChatRequest, settings: SettingsDep):
     if not body.stream:
         return result
 
+    # Sends the completed answer in chunks using Server-Sent Events.
+    # This is chunked delivery, not true token-by-token LLM streaming.
     def event_stream():
         answer = result["answer"]
         chunk_size = 40
@@ -99,7 +112,9 @@ def chat_endpoint(body: ChatRequest, settings: SettingsDep):
             chunk = answer[start : start + chunk_size]
             yield f"data: {json.dumps({'text': chunk})}\n\n"
 
-        yield f"data: {json.dumps({'done': True, 'model': result['model']})}\n\n"
+        yield (
+            f"data: {json.dumps({'done': True, 'model': result['model']})}\n\n"
+        )
 
     return StreamingResponse(
         event_stream(),
