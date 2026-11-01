@@ -1,4 +1,4 @@
-# UzhavarVoice
+﻿# UzhavarVoice
 
 > Fill this top section from your Examate project card on Day 1. Replace every line in angle brackets.
 
@@ -9,10 +9,10 @@ TNAU's Agritech Portal has excellent advice on pests,varieties,fertiliser and sc
 Paddy and banana farmer in Thanjavur district with a basic smartphone, who prefers speaking in Tamil over typing.
 
 ## Signature feature
-The app must read the answer aloud in simple, conversational Tamil, provide a direct link to the TNAU page, and highlight key details—such as crop varieties, fertilizer doses, or timelines—in large, easy-to-read text.
+The app must read the answer aloud in simple, conversational Tamil, provide a direct link to the TNAU page, and highlight key detailsâ€”such as crop varieties, fertilizer doses, or timelinesâ€”in large, easy-to-read text.
 
 ## Hardest problem (my interview story)
-To handle cross-language search—where questions come in Tamil while many source pages are in English—the system compares direct multilingual embeddings against translating the question into English first, measuring retrieval recall separately for Tamil-to-English and Tamil-to-Tamil pairs.
+To handle cross-language searchâ€”where questions come in Tamil while many source pages are in Englishâ€”the system compares direct multilingual embeddings against translating the question into English first, measuring retrieval recall separately for Tamil-to-English and Tamil-to-Tamil pairs.
 
 ## Dataset
 | Source | Link | Documents | Pages | Licence / terms |
@@ -32,4 +32,4 @@ curl localhost:8000/health
 ```
 
 ## Live link
-<Added in Week 2>
+[https://uzhavarvoice.onrender.com](https://uzhavarvoice.onrender.com)

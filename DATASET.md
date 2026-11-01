@@ -46,4 +46,9 @@ Collection must respect the source website's terms and `robots.txt`. Restricted 
    `python tools/count_pages.py`
 
 ## Sample Data
-The permitted sample files belong in `data/sample/`. Add 2–3 suitable files only after checking the applicable terms. The sample folder has not yet been populated with these files.
+The `data/sample/` directory contains:
+- `banana_pest_sample.md`
+- `paddy_climate_sample.md`
+- `sample_record.json`
+
+These are representative sample files. Their source attribution and reuse permissions should be verified before redistribution.
