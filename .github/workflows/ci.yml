@@ -27,27 +27,23 @@ jobs:
         env:
           PYTHONPATH: .
 
-      - name: Build Docker image
-        run: docker build -t uzhavarvoice:ci .
+      - name: Build and start Docker Compose
+        run: docker compose up -d --build
+        env:
+          GEMINI_API_KEY: ci-test-key
 
-      - name: Start Docker container
-        run: |
-          docker run -d \
-            --name uzhavarvoice-ci \
-            -p 8000:8000 \
-            -e APP_NAME=UzhavarVoice \
-            -e ENVIRONMENT=ci \
-            uzhavarvoice:ci
+      - name: Check Docker containers
+        run: docker compose ps
 
       - name: Smoke test health endpoint
         run: |
-          curl --fail --retry 10 --retry-connrefused \
+          curl --fail --retry 15 --retry-connrefused \
             --retry-delay 2 http://localhost:8000/health
 
       - name: Show container logs on failure
         if: failure()
-        run: docker logs uzhavarvoice-ci || true
+        run: docker compose logs api db
 
-      - name: Stop Docker container
+      - name: Stop Docker Compose
         if: always()
-        run: docker rm -f uzhavarvoice-ci || true
+        run: docker compose down -v
