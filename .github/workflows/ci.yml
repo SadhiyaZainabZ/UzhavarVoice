@@ -33,7 +33,10 @@ jobs:
           GEMINI_API_KEY: ci-test-key
 
       - name: Check Docker containers
-        run: docker compose ps
+        run: |
+         sleep 10
+         docker compose ps -a
+         docker compose logs --tail=100 api
 
       - name: Smoke test health endpoint
         run: |
