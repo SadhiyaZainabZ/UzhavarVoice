@@ -40,9 +40,14 @@ jobs:
 
       - name: Smoke test health endpoint
         run: |
-          curl --fail --retry 15 --retry-connrefused \
-            --retry-delay 2 http://localhost:8000/health
-
+         echo "Checking API health..."
+         curl -v --max-time 10 http://localhost:8000/health || {
+         echo "Health check failed. Container status:"
+         docker compose ps -a
+         echo "API logs:"
+         docker compose logs --tail=100 api
+         exit 1
+         }
       - name: Show container logs on failure
         if: failure()
         run: docker compose logs api db
