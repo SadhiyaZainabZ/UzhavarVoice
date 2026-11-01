@@ -1,3 +1,4 @@
+
 name: CI
 
 on: [push, pull_request]
@@ -5,31 +6,48 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - run: pip install -r requirements-dev.txt
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
 
-      - run: ruff check .
+      - name: Run Ruff
+        run: ruff check .
 
       - name: Run tests
         run: python -m pytest -q
         env:
           PYTHONPATH: .
-# name: CI
-# on: [push, pull_request]
-# jobs:
-#   test:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v4
-#       - uses: actions/setup-python@v5
-#         with:
-#           python-version: "3.12"
-#       - run: pip install -r requirements-dev.txt
-#       - run: ruff check .
-#       - run: pytest -q
+
+      - name: Build Docker image
+        run: docker build -t uzhavarvoice:ci .
+
+      - name: Start Docker container
+        run: |
+          docker run -d \
+            --name uzhavarvoice-ci \
+            -p 8000:8000 \
+            -e APP_NAME=UzhavarVoice \
+            -e ENVIRONMENT=ci \
+            uzhavarvoice:ci
+
+      - name: Smoke test health endpoint
+        run: |
+          curl --fail --retry 10 --retry-connrefused \
+            --retry-delay 2 http://localhost:8000/health
+
+      - name: Show container logs on failure
+        if: failure()
+        run: docker logs uzhavarvoice-ci || true
+
+      - name: Stop Docker container
+        if: always()
+        run: docker rm -f uzhavarvoice-ci || true
