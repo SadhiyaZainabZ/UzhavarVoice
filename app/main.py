@@ -1,14 +1,18 @@
 ﻿
 import json
 import logging
-from threading import Lock
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 
 from app.config import Settings, get_settings
-from app.database import check_database
+from app.database import (
+    check_database,
+    get_usage_totals,
+    initialize_usage_table,
+    record_usage,
+)
 from app.llm import chat
 from app.schemas import ChatRequest, ChatResponse
 
@@ -19,15 +23,11 @@ app = FastAPI(title="UzhavarVoice", version="0.2.0")
 
 SettingsDep = Annotated[Settings, Depends(get_settings)]
 
-_usage_lock = Lock()
 
-_usage = {
-    "requests": 0,
-    "input_tokens": 0,
-    "output_tokens": 0,
-    "estimated_cost_usd": 0.0,
-    "fallback_requests": 0,
-}
+@app.on_event("startup")
+def startup_event():
+    """Initialize persistent usage storage."""
+    initialize_usage_table()
 
 
 @app.get("/health")
@@ -44,7 +44,6 @@ def health(settings: SettingsDep) -> dict:
 def ready(settings: SettingsDep) -> dict:
     """Check database connectivity and Gemini configuration."""
 
-    # Check the database first so its failure is reported correctly.
     if not check_database():
         raise HTTPException(
             status_code=503,
@@ -65,19 +64,23 @@ def ready(settings: SettingsDep) -> dict:
 
 @app.get("/usage")
 def usage() -> dict:
-    """Return in-memory LLM usage totals."""
-    with _usage_lock:
-        return dict(_usage)
+    """Return persistent LLM usage totals from PostgreSQL."""
+    try:
+        return get_usage_totals()
+    except Exception as exc:
+        logger.error(
+            "Could not retrieve usage totals: %s",
+            type(exc).__name__,
+        )
+        raise HTTPException(
+            status_code=503,
+            detail="Usage data is currently unavailable",
+        ) from exc
 
 
 def _record_usage(result: dict) -> None:
-    """Record successful LLM request usage."""
-    with _usage_lock:
-        _usage["requests"] += 1
-        _usage["input_tokens"] += result["input_tokens"]
-        _usage["output_tokens"] += result["output_tokens"]
-        _usage["estimated_cost_usd"] += result["estimated_cost_usd"]
-        _usage["fallback_requests"] += int(result["fallback_used"])
+    """Persist successful LLM request usage."""
+    record_usage(result)
 
 
 @app.post("/chat", response_model=ChatResponse)
@@ -86,7 +89,6 @@ def chat_endpoint(body: ChatRequest, settings: SettingsDep):
     try:
         result = chat(body.message, settings)
     except Exception as exc:
-        # Do not expose API keys or internal error details to clients.
         logger.error(
             "LLM request failed: %s: %s",
             type(exc).__name__,
@@ -97,13 +99,22 @@ def chat_endpoint(body: ChatRequest, settings: SettingsDep):
             detail="LLM request failed. Check API container logs.",
         ) from exc
 
-    _record_usage(result)
+    try:
+        _record_usage(result)
+    except Exception as exc:
+        logger.error(
+            "Could not save usage record: %s",
+            type(exc).__name__,
+        )
+        raise HTTPException(
+            status_code=503,
+            detail="Chat succeeded but usage logging failed.",
+        ) from exc
 
     if not body.stream:
         return result
 
     # Sends the completed answer in chunks using Server-Sent Events.
-    # This is chunked delivery, not true token-by-token LLM streaming.
     def event_stream():
         answer = result["answer"]
         chunk_size = 40
