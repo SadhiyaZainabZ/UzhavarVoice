@@ -13,7 +13,7 @@ from app.database import (
     initialize_usage_table,
     record_usage,
 )
-from app.llm import chat
+from app.gemini_llm import chat
 from app.schemas import ChatRequest, ChatResponse
 
 logging.basicConfig(level=logging.INFO)
@@ -64,7 +64,7 @@ def ready(settings: SettingsDep) -> dict:
 
 @app.get("/usage")
 def usage() -> dict:
-    """Return persistent LLM usage totals from PostgreSQL."""
+    """Return persistent LLM usage totals from SQLite."""
     try:
         return get_usage_totals()
     except Exception as exc:

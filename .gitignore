@@ -9,4 +9,5 @@ data/raw/
 *.sqlite
 .DS_Store
 venv/
+usage.db
 
