@@ -1,6 +1,3 @@
-"""Polite downloader: python tools/download.py urls.txt
-urls.txt: one URL per line (lines starting with # are skipped).
-Saves files to data/raw/ and logs every file to data/manifest.csv."""
 import csv
 import hashlib
 import os
@@ -14,35 +11,45 @@ import requests
 
 RAW = "data/raw"
 MANIFEST = "data/manifest.csv"
-HEADERS = {"User-Agent": "ExamateStudentProject/1.0 (learning project; contact: your-email@example.com)"}
-DELAY = 2 # seconds between requests: be polite to government servers
+
+HEADERS = {
+    "User-Agent": "ExamateStudentProject/1.0 (learning project; contact: mabhusubhani001@gmail.com)"
+}
+
+DELAY = 2
 robots = {}
+
 
 def allowed(url):
     root = "{0.scheme}://{0.netloc}".format(urlparse(url))
 
     if root not in robots:
         rp = RobotFileParser(root + "/robots.txt")
+
         try:
             rp.read()
-            robots[root] = rp
         except Exception:
-            robots[root] = None
+            rp = None
+
+        robots[root] = rp
 
     rp = robots[root]
 
+    # Do not download if robots.txt cannot be verified.
     if rp is None:
-        print("Cannot verify robots.txt; skipping:", url)
         return False
 
     return rp.can_fetch(HEADERS["User-Agent"], url)
+
 
 def name_for(url):
     name = os.path.basename(urlparse(url).path) or "index.html"
     return name.replace(" ", "_")
 
+
 def main(list_file):
     os.makedirs(RAW, exist_ok=True)
+
     new_manifest = not os.path.exists(MANIFEST)
 
     with open(MANIFEST, "a", newline="", encoding="utf-8") as mf:
@@ -50,10 +57,14 @@ def main(list_file):
 
         if new_manifest:
             log.writerow([
-                "file", "source_url", "downloaded_on", "bytes", "sha256"
+                "file",
+                "source_url",
+                "downloaded_on",
+                "bytes",
+                "sha256"
             ])
 
-        with open(list_file, encoding="utf-8-sig") as fh:
+        with open(list_file, encoding="utf-8") as fh:
             urls = [u.strip() for u in fh]
 
         for url in urls:
@@ -71,7 +82,12 @@ def main(list_file):
                 continue
 
             try:
-                r = requests.get(url, headers=HEADERS, timeout=30)
+                r = requests.get(
+                    url,
+                    headers=HEADERS,
+                    timeout=30
+                )
+
                 if r.status_code != 200:
                     print("failed", r.status_code, url)
                     continue
@@ -79,18 +95,22 @@ def main(list_file):
                 with open(path, "wb") as f:
                     f.write(r.content)
 
-                digest = hashlib.sha256(r.content).hexdigest()
+                digest = hashlib.sha256(r.content).hexdigest()[:16]
+
                 log.writerow([
-                    path, url, date.today().isoformat(),
-                    len(r.content), digest
+                    path,
+                    url,
+                    date.today().isoformat(),
+                    len(r.content),
+                    digest
                 ])
 
                 print("saved", path, len(r.content), "bytes")
 
-            except requests.RequestException as exc:
-                print("failed", url, exc)
+                time.sleep(DELAY)
 
-            time.sleep(DELAY)
+            except requests.RequestException as e:
+                print("download error:", url, e)
 
 
 if __name__ == "__main__":
