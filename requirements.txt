@@ -5,3 +5,4 @@ httpx==0.28.1
 requests>=2.32
 beautifulsoup4>=4.15
 pypdf>=6.21
+google-genai
