@@ -1,6 +1,5 @@
 ﻿
 import sqlite3
-from app.config import get_settings
 
 
 def get_connection():
