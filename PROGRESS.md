@@ -19,7 +19,7 @@ Commit after every class. Tag every Friday: `git tag week-N && git push origin w
 - [x] Tag week-2 pushed
 
 ## Week 3 (tag week-3 by Fri 6 Nov)
-- [ ] Parser keeps page numbers and headings
+- [x] Parser keeps page numbers and headings
 - [ ] 500+ pages chunked, embedded and stored in pgvector
 - [ ] POST /ask answers with [document, page] citations
 - [ ] docs/EVAL_v0.md with my 10 questions scored
@@ -38,3 +38,4 @@ Commit after every class. Tag every Friday: `git tag week-N && git push origin w
 | 30 Oct 2026 | Integrated PostgreSQL usage tracking and fixed usage persistence. | fix: restore PostgreSQL usage tracking |
 | 1 Nov 2026 | Deployed the API using Render and connected Supabase PostgreSQL. Verified the deployed endpoints. | Week 2 documentation and deployment updates |
 | 3 Nov 2026 | Updated Week 1 and Week 2 documentation, verified GitHub Actions and pushed the `week-2` tag. | Update Week 1 and Week 2 project documentation |
+| 4 Nov 2026 | Implemented and validated HTML/PDF parsing with Tamil-English OCR, preserved headings and page numbers, and passed both parser validation tests. | Complete document parser implementation and automated validation |
