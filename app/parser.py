@@ -5,7 +5,6 @@ from bs4 import BeautifulSoup
 from pdf2image import convert_from_path
 from pypdf import PdfReader
 
-
 RAW_DIR = Path("data/raw")
 
 TESSERACT_CMD = (
