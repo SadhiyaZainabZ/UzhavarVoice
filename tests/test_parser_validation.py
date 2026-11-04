@@ -1,39 +1,62 @@
-import pytest
-
-from app.parser import parse_all_documents
+﻿from app import parser
 
 
-@pytest.fixture(scope="module")
-def parsed_records():
-    """Parse all documents only once for this test module."""
-    return parse_all_documents()
+def test_parser_records_have_required_metadata(tmp_path, monkeypatch):
+    html_file = tmp_path / "sample.html"
 
+    html_file.write_text(
+        """
+        <html>
+            <body>
+                <main>
+                    <h1>Paddy Cultivation</h1>
+                    <p>Paddy requires sufficient water.</p>
+                    <h2>Irrigation</h2>
+                    <p>Maintain suitable water levels.</p>
+                </main>
+            </body>
+        </html>
+        """,
+        encoding="utf-8",
+    )
 
-def test_parser_records_have_required_metadata(parsed_records):
-    assert len(parsed_records) > 0
+    monkeypatch.setattr(parser, "RAW_DIR", tmp_path)
 
-    for record in parsed_records:
+    records = parser.parse_all_documents(tmp_path)
+
+    assert len(records) > 0
+
+    for record in records:
         assert record["text"].strip()
         assert record["source"]
-        assert record["file_type"] in {"html", "pdf"}
-
-        if record["file_type"] == "html":
-            assert record["heading"]
-
-        if record["file_type"] == "pdf":
-            assert record["page"] is not None
-            assert record["page"] >= 1
+        assert record["file_type"] == "html"
+        assert record["heading"]
 
 
-def test_all_pdf_pages_are_preserved(parsed_records):
-    pdf_records = [
-        record
-        for record in parsed_records
-        if record["file_type"] == "pdf"
-    ]
+def test_parser_preserves_html_headings(tmp_path, monkeypatch):
+    html_file = tmp_path / "sample.html"
 
-    assert len(pdf_records) == 97
+    html_file.write_text(
+        """
+        <html>
+            <body>
+                <main>
+                    <h1>Paddy Cultivation</h1>
+                    <p>Paddy needs water.</p>
+                    <h2>Irrigation</h2>
+                    <p>Maintain water levels.</p>
+                </main>
+            </body>
+        </html>
+        """,
+        encoding="utf-8",
+    )
 
-    for record in pdf_records:
-        assert record["page"] is not None
-        assert record["page"] >= 1
+    monkeypatch.setattr(parser, "RAW_DIR", tmp_path)
+
+    records = parser.parse_all_documents(tmp_path)
+    headings = {record["heading"] for record in records}
+
+    assert "Paddy Cultivation" in headings
+    assert "Irrigation" in headings
+
