@@ -12,10 +12,11 @@ This dataset supports UzhavarVoice, an agricultural assistance project focused o
 
 ## Collection Summary
 - HTML files collected: 20
-- PDF files collected: 2
-- Total files: 22
-- PDF pages: 97
-- Counting result: 117 units using `python tools/count_pages.py` (each HTML file counts as one unit and each PDF page counts individually).
+- PDF files collected: 3
+- Total files: 23
+- PDF pages: 101
+- Counting result: 121 units using `python tools/count_pages.py` (each HTML file counts as one unit and each PDF page counts individually).
+- Latest addition: Tamil Horticulture Package of Practices PDF, downloaded on 2026-11-06.
 
 ## File Inventory
 The file-level inventory, source URLs, download dates, byte sizes, and SHA-256 hashes are recorded in `data/manifest.csv`.
