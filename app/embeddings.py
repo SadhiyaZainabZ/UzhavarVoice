@@ -5,7 +5,7 @@ from app.config import get_settings
 
 EMBEDDING_MODEL = "gemini-embedding-001"
 EMBEDDING_DIMENSION = 768
-BATCH_SIZE = 50
+BATCH_SIZE = 10
 
 
 def get_embedding_client():

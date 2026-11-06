@@ -8,6 +8,7 @@ class Settings(BaseSettings):
 
     app_name: str = "UzhavarVoice"
     environment: str = "local"
+    database_url: str = ""
 
     # Existing Gemini settings
     gemini_api_key: str = ""

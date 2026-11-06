@@ -16,7 +16,7 @@ from app.parser import parse_all_documents
 RAW_DIR = Path("data/raw")
 CHUNK_SIZE = 1800
 CHUNK_OVERLAP = 250
-BATCH_DELAY = 65
+BATCH_DELAY = 90
 MAX_RETRIES = 5
 
 
