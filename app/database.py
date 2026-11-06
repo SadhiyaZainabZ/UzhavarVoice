@@ -1,7 +1,10 @@
-
+﻿
+import hashlib
 import os
 
 import psycopg
+from pgvector import Vector
+from pgvector.psycopg import register_vector
 from psycopg.rows import dict_row
 
 
@@ -86,7 +89,6 @@ def get_usage_totals() -> dict:
             """)
 
             return cursor.fetchone()
-from pgvector import Vector
 
 
 def initialize_document_chunks_table() -> None:
@@ -115,8 +117,6 @@ def initialize_document_chunks_table() -> None:
 def store_document_chunk(chunk: dict, embedding: list[float]) -> None:
     """Store one chunk and its embedding without creating duplicates."""
 
-    import hashlib
-
     if len(embedding) != 768:
         raise ValueError("Embedding must contain exactly 768 dimensions")
 
@@ -130,6 +130,8 @@ def store_document_chunk(chunk: dict, embedding: list[float]) -> None:
     ).hexdigest()
 
     with get_connection() as connection:
+        register_vector(connection)
+
         with connection.cursor() as cursor:
             cursor.execute(
                 """
@@ -164,10 +166,6 @@ def store_document_chunks(
     embeddings: list[list[float]],
 ) -> int:
     """Store multiple document chunks and embeddings in one database connection."""
-
-    import hashlib
-    from pgvector import Vector
-    from pgvector.psycopg import register_vector
 
     if len(chunks) != len(embeddings):
         raise ValueError("Chunks and embeddings must have the same length")
@@ -228,8 +226,6 @@ def store_document_chunks(
 
 def get_existing_chunk_hashes(chunks: list[dict]) -> set[str]:
     """Return hashes of chunks that are already stored in PostgreSQL."""
-
-    import hashlib
 
     if not chunks:
         return set()

@@ -4,14 +4,14 @@ from pathlib import Path
 
 from google.genai.errors import ClientError
 
-from app.parser import parse_all_documents
 from app.chunker import chunk_records
-from app.embeddings import generate_embeddings, BATCH_SIZE
 from app.database import (
+    get_existing_chunk_hashes,
     initialize_document_chunks_table,
     store_document_chunks,
-    get_existing_chunk_hashes,
 )
+from app.embeddings import BATCH_SIZE, generate_embeddings
+from app.parser import parse_all_documents
 
 RAW_DIR = Path("data/raw")
 CHUNK_SIZE = 1800
