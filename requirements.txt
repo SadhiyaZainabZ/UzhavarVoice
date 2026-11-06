@@ -10,3 +10,4 @@ psycopg[binary]>=3.2,<4
 pytesseract
 pdf2image
 Pillow
+pgvector==0.5.1
